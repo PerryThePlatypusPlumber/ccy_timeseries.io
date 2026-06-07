@@ -1,0 +1,287 @@
+---
+title: "timeseries"
+---
+
+# Stationary
+
+A time series $Y_t$ is stationary if its probability distribution does not change over time. In particular, the mean, variance, and auto-co-variances are not changing:\
+
+$$E(Y_1) = E(Y_2) = \cdots = E(Y_t) = \cdots \\$$ $$Var(Y_1) = Var(Y_2) = \cdots = Var(Y_t) = \cdots \\ $$ $$Cov(Y_1, Y_k) = Cov(Y_2, Y_{k+1}) = \cdots = Cov(Y_t, Y_{k+1}) = \cdots $$
+
+for $t \in \mathbb{N}$: Stock prices themselves can trend upward or downward over time. Even with stationary returns, prices can still move significantly, but why?
+
+\
+The quality of the forecast at period $t$ (for $t \in \mathbb{N}$) can be measured by the forecast error, which is given by
+
+$$
+\text{Error} = Y_{t+1} - \hat{Y}_{(t+1 \mid t)}
+$$
+
+A better measure is perhaps $\left| Y_{t+1} - \hat{Y}_{(t+1 \mid t)} \right|^2$ or $\left( Y_{T+1} - \hat{Y}_{(t+1 \mid t)} \right)^2.$ which is the absolute error. Moreover, both $Y_{t+1}$ and $\hat{Y}_{(t+1 \mid t)}$ are random; thus, the errors are also random.
+
+## Fact: How to find the best linear forecasting
+
+Let $Y_t$ be a stationary time series with $\mathbb{E}(Y_t) = \mu, \text{Var}(Y_t) = \sigma^2$. Suppose the autocorrelation function is
+
+$\rho_k \;=\; \frac{\operatorname{Cov}(Y_t,\,Y_{t+k})}{\sqrt{\operatorname{Var}(Y_t)}\sqrt{\operatorname{Var}(Y_{t+k})}}$ for $k = 0, 1, 2, \dots$ is known. Suppose we want to use $Y_t$ to forecast $Y_{t+k}$
+
+-   we would need the find $\mathbb{E}(Y_t Y_{t+k})$ because it is the second-moment (dependence) information that determines how strongly today’s value helps linearly predict the future.
+
+-   and we would also need $\mathbb{E}(Y_{t+k} - (aY_t + b))^2$ because it is the mean-squared forecast error that is minimized to pick the best linear forecast coefficients $a$ and $b$.
+
+Lets us do it one by one:
+
+**First step:** I first show that $\mathbb{E}(Y_t Y_{t+k}) = \rho_k\sigma^2 + \mu^2$ for any $k = 0, 1, 2, \dots$
+
+We start with the definition of the covariance between two variables:
+
+$$
+\text{Cov}(Y_t, Y_{t+k}) = \mathbb{E}(Y_t Y_{t+k}) - \mathbb{E}(Y_t)\mathbb{E}(Y_{t+k})
+$$
+
+Because of stationary: $\text{Var}(Y_t) = \text{Var}(Y_{t+k})$ and $\mathbb{E}(Y_t) = \mathbb{E}(Y_{t+k})$
+
+$$
+\rho_k=\frac{\operatorname{Cov}(Y_t,Y_{t+k})}{\sigma^{2}}\;\Longrightarrow\;\operatorname{Cov}(Y_t,Y_{t+k})=\rho_k\sigma^{2}.\tag{2}
+$$
+
+And therefore by simple substitution, we can easily get our answer:
+
+$$
+$\rho_k\sigma^{2}
+=\mathbb{E}(Y_tY_{t+k})-\mu\cdot\mu
+\;\Longrightarrow\;
+\mathbb{E}(Y_tY_{t+k})=\rho_k\sigma^{2}+\mu^{2}$
+$$
+
+**The Next Step:**
+
+The goal here is to write the mean‑squared‑error (MSE). We would need to first expand $\displaystyle\mathbb{E}\!\bigl[(Y_{t+k}-(aY_t+b))^{2}\bigr]$
+
+$$
+\begin{aligned}(Y_{t+k}-(aY_t+b))^{2}&= \bigl(Y_{t+k}-aY_t-b\bigr)^{2}  
+\\&= Y_{t+k}^{2} -2aY_{t+k}Y_t -2bY_{t+k} + a^{2}Y_t^{2}+2abY_t+b^{2}\end{aligned}
+$$
+
+Recall $\operatorname{Var}(Y)=\mathbb{E}(Y^{2})-\mu^{2}$ and $\displaystyle\mathbb{E}(Y_tY_{t+k})=\rho_k\sigma^{2}+\mu^{2}$. And because expectation is linear, we can treat each term separately:
+
+$$
+\begin{aligned}\mathbb{E}&\bigl[(Y_{t+k}-(aY_t+b))^{2}\bigr] 
+\\&= \mathbb{E}\bigl[(Y_{t+k}^{2} -2aY_{t+k}Y_t -2bY_{t+k} + a^{2}Y_t^{2}+2abY_t+b^{2}]
+\\&= (\sigma^{2}+\mu^{2})   -2a\bigl(\rho_k\sigma^{2}+\mu^{2}\bigr)   -2b\mu + a^{2}(\sigma^{2}+\mu^{2})   +2ab\mu   + b^{2}
+\\&= \sigma^{2}\bigl(1 + a^{2} - 2a\rho_k\bigr) \;+\; \underbrace{\Bigl[\mu^{2}(1-a)^{2} -2b\mu(1-a) + b^{2}\Bigr]}_{\bigl(\mu(1-a)-b\bigr)^{2}}
+\end{aligned}
+$$ And eventually we get:
+
+$$\boxed{\;
+\mathbb{E}\!\bigl[(Y_{t+k}-(aY_t+b))^{2}\bigr]
+   = \sigma^{2}\bigl(1-2a\rho_k + a^{2}\bigr) 
+     + \bigl(\mu(1-a)-b\bigr)^{2}\; }
+$$ The two terms on the right‑hand side have a very useful property: -
+
+-   each term is non‑negative (a square multiplied by a positive constant)
+
+-   the sum is zero iff both terms are zero.
+
+And the most important is, the best forecasting would be solving $\min_{a,b} \mathbb{E}(Y_{t+k} - (aY_t + b))^2$
+
+A square reaches its smallest possible value (zero) when the quantity inside the square is zero. Let $g(a)=1-2a\rho_k+a^{2}$:
+
+$$\frac{d}{da}g(a)= -2\rho_k+2a = 0
+\;\Longrightarrow\;
+\boxed{\,a=\rho_k\,}$$
+
+Substitute into: $$\mu(1-a)- b= \mu(1-\rho_k)- b = 0 \quad\Longrightarrow\quad \boxed{\,b=\mu(1-\rho_k)\,}$$ We solve the best linear forecast $$\hat{Y}_{t+k}= \rho_k\,Y_t \;+\; \mu\bigl(1-\rho_k\bigr)$$
+
+------------------------------------------------------------------------
+
+# AR(n) Model:
+
+For all $k \in \mathbb{N}^+$, an AR(k) model is defined by the equation:
+
+$$
+Y_t = \beta_0 + \beta_1 Y_{t-1} + \beta_2 Y_{t-2} + \ldots + \beta_k Y_{t-k} + \varepsilon_t
+$$
+
+where:
+
+-   $Y_t$ is the value of the time series at time
+-   $\beta_{0}$ is a constant term.
+-   $\beta_1, \beta_2, \ldots,\beta_k$ are the parameters of the model.
+-   $\varepsilon_t$ is a white noise error term.
+
+**For an AR(1) model as an example:**
+
+$$
+Y_t=\beta_{0}+\beta_{1}Y_{t-1}+u_t
+$$
+
+Because by the definition of stationary the $\mathbb{E}[Y_t] = \mathbb{E}[Y_{t-1}]$, and so it's expected mean would be:$\mathbb{E}[Y_t] = \beta_0 + \beta_1 \mathbb{E}[Y_{t-1}] + \mathbb{E}[u_t]$:\
+$$\mathbb{E}(Y_t) = \frac{\beta_0}{1 - \beta_1}$$
+
+## **Proposition 1:**
+
+*Suggest an AR(1) function* $Y_t$ *satisfy the 'stationary process' assumption(s) :* $Y_t = \beta_0 + \beta_1 + u_t$*, only if* $|\beta_1| < 1$
+
+**Proof**: Recall: $\operatorname{Var}(x+y)=\operatorname{Var}(x)+\operatorname{Var}(y)+2\operatorname{Cov}(x,y)$ for $x,y \in \mathbb{R}$. Because $\beta_0$ & $\beta_1$ are constant and $u$ is the error term, recall that $\operatorname{Var}(\beta_0 + \beta_1Y_t) = {\beta_2}^2\operatorname{Var(Y_t)}$, so is trivial to compute.
+
+$$
+\begin{split}\operatorname{Var}(Y_{0})&=\operatorname{Var}\left(\beta_{0}+\beta_{1}Y_{t-1}+u_t\right) \\&=\operatorname{Var}(\beta_{1} Y_{t-1}+u)+\underbrace{\operatorname{Var}(\beta_0)}_{0}+ 2 \underbrace{(\beta_{0},(\beta_{1}Y_{t-1}+ u_t)}_{0}\\&=\operatorname{Var}(\beta_{1} Y_{t-1}) + \operatorname{Var}(u) + \underbrace{\operatorname{Cov}(\beta_1Y_{t-1}, u_t)}_{0} \\&={\beta_1}^2\operatorname{Var}(Y_{t-1}) + \operatorname{Var}(u_t)\end{split}
+$$
+
+Because $\operatorname{Var}(Y_{t-1}) = \operatorname{Var}(Y_t)$ by the stationary assumption, we get:
+
+$$
+\operatorname{Var}(Y_{0}) = {\beta_1}^2\operatorname{Var}(Y_{t-1}) + \operatorname{Var}(u_t)\\\Leftrightarrow (1-{\beta_t}^2)\sigma_Y^2 = \sigma_u^2
+$$
+
+The $\sigma^2_j$ for $j \in \{{Y, u}\}$, the equation holds only if ${\beta_1}^2 < 1 \Leftrightarrow |\beta_1| < 1$
+
+# ARMA(m,n) Model:
+
+For $x,y\in \mathbb{N}^+$, an ARMA(x,y) model is defined by the equation:
+
+$$
+Y_t = \beta_0 + \underbrace{ \beta_1 Y_{t-1} + \beta_2 Y_{t-2} + \ldots + \beta_x Y_{t-x}}_{\operatorname{AR(x) part}} + u_t + \underbrace{\theta_1 u_{t-1} + \theta_2 u_{t-2} + \ldots + \theta_y u_{t-y}}_{\operatorname{MA(y)part}}
+$$
+
+where:
+
+\- $Y_t$ is the value of the time series at time $t$.
+
+\- $\beta_0$ is a constant term. - $\beta_1, \beta_2, \ldots, \beta_x$ are the coefficients for the auto-regressive part, indicating the influence of the previous $x$ values.
+
+\- $u_t$ is a white noise error term at time $t$.
+
+\- $\theta_1, \theta_2, \ldots, \theta_y$ are the coefficients for the moving average part, indicating the influence of the previous $y$ error terms.
+
+**For example: the ARMA(1,1) model:**
+
+$$
+Y_t = \beta_0 + \beta_1 Y_{t-1} + \varepsilon_t + \theta_1 \varepsilon_{t-1}
+$$
+
+For AR processes, the auto-co-variances/auto-correlations decay exponentially. And for MA processes, the auto-co-variances/auto-correlations cut off after some lags.
+
+## **Proposition 2:**
+
+*For a stationary ARMA(1,1), its variance would be:*
+
+$$
+\text{Var}(Y_t) = \frac{(1 + \theta_1^2 + 2\beta_1\theta_1)\sigma_u^2}{1 - \beta_1^2}
+$$
+
+**Proof:** Let $Z_t$ be a stationary ARMA(1,1) model: $\text{Var}(Z_t) = \text{Var}(\beta_0 + \beta_1 Z_{t-1} + u_t + \theta_1 u_{t-1})$, Using the properties of variance.
+
+$$
+\begin{split}\text{Var}(Z_t) &= \beta_1^2 \text{Var}(Z_{t-1}) + \text{Var}(u_t) + \theta_1^2 \text{Var}(u_{t-1}) + 2 \beta_1 \theta_1 \text{Cov}(Z_{t-1}, u_{t-1}) 
+\\&= \beta_1^2 \text{Var}(Z_t) + \sigma_u^2 + \theta_1^2 \sigma_u^2 + 2 \beta_1 \theta_1 \underbrace{\text{Cov}(Z_{t-1}, u_{t-1}}_{\sigma_u^2}) 
+\\Var(Z_t)& = \frac{(1 + \theta_1^2 + 2\beta_1\theta_1)\sigma_u^2}{1 - \beta_1^2}\end{split}
+$$
+
+Note: Using the properties of covariance, $\text{Cov}(\beta_1 Y_{t-1}, \theta_1 \varepsilon_{t-1}) = \beta_1 \theta_1 \text{Cov}(Y_{t-1}, \varepsilon_{t-1})$, and the covariance term can be represented in terms of the variance of the error term: $\text{Cov}(Y_{t-1}, u_{t-1}) = \sigma_u^2$
+
+$$\begin{aligned} \operatorname{Cov}\bigl(Y_{t-1},u_{t-1}\bigr) &= \operatorname{Cov}\!\Bigl(\beta_{1}Y_{t-2}+u_{t-1}+\theta_{1}u_{t-2},\,u_{t-1}\Bigr) \\ &= \beta_{1}\underbrace{\operatorname{Cov}(Y_{t-2},u_{t-1})}_{=0} +\operatorname{Cov}(u_{t-1},u_{t-1}) +\theta_{1}\underbrace{\operatorname{Cov}(u_{t-2},u_{t-1})}_{=0} \\ &= \operatorname{Var}(u_{t-1}) = \sigma_u^2 . \end{aligned}$$
+
+# MA(n) Model:
+
+An **MA(n)** model (observed (zero‑mean) stochastic process,) is defined by:
+
+$$
+X_t = u_t + \theta_1 u_{t-1} + \theta_2 u_{t-2} + \dots + \theta_m u_{t-m}
+$$
+
+Which $\{u_t\}$ be a white‑noise sequence with $\operatorname{E}[u_t]=0$,$\operatorname{Var}(u_t)=\sigma_u^{2}$ and $\operatorname{Cov}(u_t,u_{s})=0\;(t\neq s)$
+
+# 
+
+### **Fact:** An ARMA(1,1) model could be transformed into a MA(1) model, as an example: $$Y_{t-1} = \beta_0 + \beta_1 Y_{t-2} + u_{t-1} + \theta_1 u_{t-2}$$
+
+If we subtract the mean $\mathbb{E}(Y_{t-1}) = \mu = \frac{\beta_0}{1 - \beta_1}$
+
+$$
+\begin{split}Z_{t-1} &= Y_{t-1} - \mu \\&= \beta_0 + \beta_1 Y_{t-2} + u_{t-1} + \theta_1 u_{t-2} - \frac{\beta_0}{1 - \beta_1}\\&= \beta_1 Y_{t-2} + u_{t-1} + \theta_1 u_{t-2} - \frac{\beta_1 \beta_0}{1 - \beta_1}\\&= \beta_1 (Y_{t-2} - \mu) + u_{t-1} + \theta_1 u_{t-2}\\&= \beta_1 Z_{t-2} + u_{t-1} + \theta_1 u_{t-2}\\\end{split}
+$$
+
+This would further help us more about the covariance relation:
+
+$$
+\begin{split}\text{Cov}(Z_{t-1}, u_{t-1}) &= \text{Cov}(\beta_1 Z_{t-2} + u_{t-1} + \theta_1 u_{t-2}, u_{t-1})\\&= \underbrace{\text{Cov}(\beta_1 Z_{t-2}, u_{t-1})}_{0} + \text{Cov}(u_{t-1}, u_{t-1}) + \underbrace{\text{Cov}(\theta_1 u_{t-2}, u_{t-1})}_{0} \\&= \text{Var}(u_{t-1})  = \sigma_u^2\end{split}
+$$\
+Now substitute $\text{Cov}(Z_{t-1}, u_{t-1}) = \sigma_u^2$ into the variance formula
+
+$$
+\text{Var}(Z_t) = \beta_1^2 \text{Var}(Z_t) + \sigma_u^2 + \theta_1^2 \sigma_u^2 + 2 \beta_1 \theta_1 \sigma_u^2
+$$
+
+Solve for $\text{Var}(Z_t)$: $$
+\text{Var}(Z_t) = \frac{\sigma_u^2 (1 + \theta_1^2 + 2 \beta_1 \theta_1)}{1 - \beta_1^2}
+$$
+
+Because of stationary, $\text{Var}(Y_t) =\text{Var}(Z_t) = \frac{\sigma_u^2 (1 + \theta_1^2 + 2 \beta_1 \theta_1)}{1 - \beta_1^2}$. The proof of $\text{Var}(Y_{t+1})$ could also be obtained using the above approach, and its computation left for the reader as an exercise ...
+
+## **Proposition 3:**
+
+*If* $Y_t$ *satisfy the condition of stationary ARMA(1,1), the co-variance of* $Y_t$ *and* $Y_{t-k}$ *for* $k \geq 2$
+
+$$
+\begin{split}\text{Cov}(Y_t, Y_{t-k}) &= \beta_1^{k-1} \text{Cov}(Y_t, Y_{t-1}) \quad \text{for } k \geq 2 \\&= (\beta_1^{k-1}) {\frac{(\theta_1 + \beta_1)(1 + \theta_1 \beta_1) \sigma_u^2}{1 - \beta_1^2}}\end{split}
+$$
+
+**Proof:** Lets us assume a stationary ARMA(1,1) model: $Y_t = \beta_0 + \beta_1 Y_{t-1} + u_t + \theta_1 u_{t-1}$. We first compute the co-variance of $Y_t$ and $Y_{t-1}$:
+
+$$\text{Cov}(Y_t, Y_{t-1}) = \mathbb{E}[(Y_t - \mu)(Y_{t-1} - \mu)]$$
+
+where again by the above definition $\mu = \frac{\beta_0}{1 - \beta_1}$, let $Z_t = Y_t - \mu$: $$Z_t = \beta_1 Z_{t-1} + u_t + \theta_1 u_{t-1}$$ Compute the co-variance:
+
+$$
+\begin{split}\text{Cov}(Z_t, Z_{t-1}) &= \mathbb{E}[Z_t Z_{t-1}] \\ &= \mathbb{E}[(\beta_1 Z_{t-1} + u_t + \theta_1 u_{t-1}) Z_{t-1}] \\&= \beta_1 \underbrace{\mathbb{E}[Z_{t-1}^2]}_{\text{Var}(Y_t)} + \underbrace{\mathbb{E}[u_t Z_{t-1}]}_{0} + \theta_1\underbrace{ \mathbb{E}[u_{t-1} Z_{t-1}}_{\text{Cov}(Z_{t-1}, u_{t-1})}]  \end{split}
+$$
+
+(Recall the **fact** that $\text{Var}(Y_t) = \frac{\sigma_u^2 (1 + \theta_1^2 + 2 \beta_1 \theta_1)}{1 - \beta_1^2}$ and ${\text{Cov}(Z_{t-1}, u_{t-1})} = \sigma_u^2$ previously ...)
+
+$$\text{Cov}(Y_t, Y_{t-1}) = \beta_1 \frac{\sigma_u^2 (1 + \theta_1^2 + 2 \beta_1 \theta_1)}{1 - \beta_1^2} + \theta_1 \sigma_u^2 = \frac{(\beta_1 + \theta_1)(1 + \beta_1 \theta_1)\sigma_u^2}{1 - \beta_1^2}
+$$
+
+And then we consider auto-covariance at lag $k \geq 2$. By induction, at $k = 2$:
+
+$$
+\begin{split}\text{Cov}(Y_t, Y_{t-2}) &= \text{Cov}(\beta_0 + \beta_1 Y_{t-1} + u_t + \theta_1 u_{t-1}, Y_{t-2})\\&= 0 + \beta_1 \text{Cov}(Y_{t-1}, Y_{t-2}) + \text{Cov}(u_t, Y_{t-2}) + \theta_1 \text{Cov}(u_{t-1}, Y_{t-2})\\&= \beta_1\text{Cov}(Y_t, Y_{t-1})\end{split}
+$$
+
+Prove for $k = m + 1$.
+
+$$
+\begin{split}    \text{Cov}(Y_t, Y_{t-m-1})     &= \beta_1 \text{Cov}(Y_{t-1}, Y_{t-m-1}) + \underbrace{\text{Cov}(u_t, Y_{t-m-1})}_{0} + \underbrace{\theta_1 \text{Cov}(u_{t-1}, Y_{t-m-1}}_{0})\\    &= \beta_1^2 \text{Cov}(Y_{t-2}, Y_{t-m-1}) = ...\\    &= \beta_1^{m} \text{Cov}(Y_{t-m}, Y_{t-m-1}) = \beta_1^{m} \text{Cov}(Y_t, Y_{t-1})\end{split}
+$$
+
+And therefore, $\text{Cov}(Y_t, Y_{t-k}) = \beta_1^{k-1} \text{Cov}(Y_t, Y_{t-1}) \quad \text{for } k \geq 2$ is both correct and intuitive.
+
+# Follow up questions:
+
+The following question is left as an exercise for readers:
+
+### **Question 1: Best linear forecasting for AR(m) model**
+
+Consider the AR(1) model, which for example: $$
+ Y_t = \beta_0 + \beta_1\,Y_{t-1} + u_t ,
+$$
+
+and the AR(m) model, which for example:
+
+$$
+Y_t = \beta_0 + \beta_1 Y_{t-1} + \beta_2 Y_{t-2} + \cdots + \beta_M Y_{t-m} + u_t
+$$
+
+for $m \in \{1,2,3,\dots\}$ the innovations $\{u_t\}$ are i.i.d. with mean $0$, variance $\sigma_u^{2}$, and the auto regressive coefficient satisfies $|\beta_1|<1$ (better to compute the value of $\rho_k$ ). Derive the best linear equations forecast of $Y_{t+1}$ using $Y_{t}$ for AR(1) and AR(m) respectively.
+
+### **Question 2: Best linear forecasting for MA(n) model**
+
+Consider the MA(1) model, which for example: $$
+Y_t=\theta_0+u_t-\theta_1 u_{t-1}
+$$ and the MA(n) model, which for example:
+
+$$
+Y_t \;=\; \mu \;+\; u_t \;+\; \theta_{1}u_{t-1} \;+\; \theta_{2}u_{t-2}\;+\;\dots\;+\;\theta_{m}u_{t-n},
+\tag{1}
+$$ for $n \in \{1,2,3,\dots\}$ the innovations $\{u_t\}$ are i.i.d. with mean $0$, variance $\sigma_u^{2}$ (better to compute the value of $\rho_k$). Derive the best linear equations forecast of $Y_{t+1}$ using $Y_{t}$ for MA(1) and MA(n) respectively.
