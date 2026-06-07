@@ -1,5 +1,5 @@
 ---
-title: "timeseries"
+title: "A note on time-series econometrics: dummies edition"
 ---
 
 # Stationary
