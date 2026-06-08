@@ -1,5 +1,5 @@
 ---
-title: "timeseries"
+title: "Time-series"
 ---
 
 # Stationary
