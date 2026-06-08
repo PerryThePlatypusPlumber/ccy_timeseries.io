@@ -162,6 +162,7 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#fact-an-arma11-model-could-be-transformed-into-a-ma1-model-as-an-example-y_t-1-beta_0-beta_1-y_t-2-u_t-1-theta_1-u_t-2" id="toc-fact-an-arma11-model-could-be-transformed-into-a-ma1-model-as-an-example-y_t-1-beta_0-beta_1-y_t-2-u_t-1-theta_1-u_t-2" class="nav-link" data-scroll-target="#fact-an-arma11-model-could-be-transformed-into-a-ma1-model-as-an-example-y_t-1-beta_0-beta_1-y_t-2-u_t-1-theta_1-u_t-2"><strong>Fact:</strong> An ARMA(1,1) model could be transformed into a MA(1) model, as an example: <span class="math display">\[Y_{t-1} = \beta_0 + \beta_1 Y_{t-2} + u_{t-1} + \theta_1 u_{t-2}\]</span></a></li>
   <li><a href="#proposition-3" id="toc-proposition-3" class="nav-link" data-scroll-target="#proposition-3"><strong>Proposition 3:</strong></a></li>
+  <li><a href="#proposition-4" id="toc-proposition-4" class="nav-link" data-scroll-target="#proposition-4"><strong>Proposition 4:</strong></a></li>
   </ul></li>
   <li><a href="#follow-up-questions" id="toc-follow-up-questions" class="nav-link" data-scroll-target="#follow-up-questions">Follow up questions:</a>
   <ul class="collapse">
@@ -380,6 +381,35 @@ Now substitute <span class="math inline">\(\text{Cov}(Z_{t-1}, u_{t-1}) = \sigma
 \begin{split}    \text{Cov}(Y_t, Y_{t-m-1})     &amp;= \beta_1 \text{Cov}(Y_{t-1}, Y_{t-m-1}) + \underbrace{\text{Cov}(u_t, Y_{t-m-1})}_{0} + \underbrace{\theta_1 \text{Cov}(u_{t-1}, Y_{t-m-1}}_{0})\\    &amp;= \beta_1^2 \text{Cov}(Y_{t-2}, Y_{t-m-1}) = ...\\    &amp;= \beta_1^{m} \text{Cov}(Y_{t-m}, Y_{t-m-1}) = \beta_1^{m} \text{Cov}(Y_t, Y_{t-1})\end{split}
 \]</span></p>
 <p>And therefore, <span class="math inline">\(\text{Cov}(Y_t, Y_{t-k}) = \beta_1^{k-1} \text{Cov}(Y_t, Y_{t-1}) \quad \text{for } k \geq 2\)</span> is both correct and intuitive.</p>
+</section>
+<section id="proposition-4" class="level2">
+<h2 class="anchored" data-anchor-id="proposition-4"><strong>Proposition 4:</strong></h2>
+<p>a moving‑average process of order 1 (MA(1)) can be re‑expressed as an auto-regressive process of (potentially) infinite order</p>
+<p><strong>Proof:</strong> Consider an MA(1) equation with <span class="math inline">\(\operatorname{Var}(u_t)=\sigma_u^{2}\)</span> and <span class="math inline">\(\mathbb{E}[u_t]=0\)</span></p>
+<p><span class="math display">\[
+Y_t =\mu +u_t - \theta_1u_{t-1}
+\]</span></p>
+<p>and so, by definition:</p>
+<p><span class="math display">\[
+Y_{t-1} =\mu +u_{t-1} - \theta_1u_{t-2} \Leftrightarrow u_{t-1} = Y_{t-1} - \mu + \theta_1u_{t-2}
+\]</span></p>
+<p>If <span class="math inline">\(\mu = 0\)</span>, by substitution, we would get the equation: <span class="math inline">\(Y_t = -\theta Y_{t-1} + u_t - \theta^2 u_{t-2}\)</span> easily, which is AR(1) equation actually. If we consider also <span class="math inline">\(Y_{t-2}\)</span> as well, it would then become <span class="math inline">\(Y_t = -\theta Y_{t-1} - \theta^2 Y_{t-2} + u_t - \theta^3 u_{t-3}\)</span>. And eventually if the process goes on and on, it would generate the AR(<span class="math inline">\(\infty\)</span>).</p>
+<p><span class="math display">\[
+Y_t = -\sum_{j=1}^{k} \theta^j Y_{t-j} + u_t - \theta^{k+1} u_{t-k-1}
+\]</span></p>
+<p>Because <span class="math inline">\(u_{t-k-1}\)</span> has constant variance <span class="math inline">\(\sigma_u^2\)</span>, the variance of this remainder term is <span class="math inline">\(\theta^{2(k+1)}\sigma_u^2\)</span>, which converges to zero. In probabilistic terms, the remainder vanishes in mean square as <span class="math inline">\(k \to \infty\)</span>. Dropping the vanishing remainder gives the exact infinite representation:</p>
+<p><span class="math display">\[
+Y_t = u_t - \sum_{j=1}^{\infty} \theta^j Y_{t-j}.
+\]</span></p>
+<p>Rearranging to match the standard auto-regressive notation:</p>
+<p><span class="math display">\[
+Y_t = \sum_{j=1}^{\infty} (-\theta)^j Y_{t-j} + u_t.
+\]</span></p>
+<p>This is precisely an AR(<span class="math inline">\(\infty\)</span>) model of the form:</p>
+<p><span class="math display">\[
+Y_t = \phi_1 Y_{t-1} + \phi_2 Y_{t-2} + \phi_3 Y_{t-3} + \cdots + u_t,
+\]</span></p>
+<p>where the auto regressive coefficients are <span class="math inline">\(\phi_j = (-\theta)^j\)</span>. Because <span class="math inline">\(|\theta|&lt;1\)</span>, these coefficients decay geometrically, ensuring the AR(<span class="math inline">\(\infty\)</span>) representation is stable and well-defined.</p>
 </section>
 </section>
 <section id="follow-up-questions" class="level1">
