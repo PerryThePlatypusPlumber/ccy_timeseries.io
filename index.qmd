@@ -1,5 +1,5 @@
 ---
-title: "A note on time-series econometrics: dummies edition"
+title: "timeseries"
 ---
 
 # Stationary
@@ -95,19 +95,19 @@ Substitute into: $$\mu(1-a)- b= \mu(1-\rho_k)- b = 0 \quad\Longrightarrow\quad \
 
 ------------------------------------------------------------------------
 
-# AR(m) Model:
+# AR(n) Model:
 
 For all $k \in \mathbb{N}^+$, an AR(k) model is defined by the equation:
 
 $$
-Y_t = \beta_0 + \beta_1 Y_{t-1} + \beta_2 Y_{t-2} + \ldots + \beta_k Y_{t-m} + \varepsilon_t
+Y_t = \beta_0 + \beta_1 Y_{t-1} + \beta_2 Y_{t-2} + \ldots + \beta_k Y_{t-k} + \varepsilon_t
 $$
 
 where:
 
 -   $Y_t$ is the value of the time series at time
 -   $\beta_{0}$ is a constant term.
--   $\beta_1, \beta_2, \ldots,\beta_m$ are the parameters of the model.
+-   $\beta_1, \beta_2, \ldots,\beta_k$ are the parameters of the model.
 -   $\varepsilon_t$ is a white noise error term.
 
 **For an AR(1) model as an example:**
@@ -256,7 +256,6 @@ $$
 $$
 
 And therefore, $\text{Cov}(Y_t, Y_{t-k}) = \beta_1^{k-1} \text{Cov}(Y_t, Y_{t-1}) \quad \text{for } k \geq 2$ is both correct and intuitive.
-
 
 ## **Proposition 4:**
 
